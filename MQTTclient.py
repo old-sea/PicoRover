@@ -8,14 +8,14 @@ import time
 import sys
 import pigpio
 
-n = 0
+n = 0 #待機モードの切り替え
 port = 1883
 topic = 'PicoRover/'+ sys.argv[2] +'/#'
 deltaT = 0
 ntime = datetime.datetime.now()
 ptime = datetime.datetime.now()
 timer = 0
-limit = [60,2]
+limit = [30,1,5] #[初期接続待機時間、動作停止のタイムアウト時間、プログラム停止のタイムアウト時間]
 end = 0
 pi = pigpio.pi()
 boundary = 205
@@ -38,7 +38,7 @@ def on_message(client, userdata, msg):
     try:
         RCcontroll(M)
     except:
-        print("Cntroll Out")
+        print("Controll Out")
     global n
     n = 1
     global ptime
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     pi.set_mode(13, pigpio.INPUT) 
     pi.set_mode(19, pigpio.INPUT)  
     pi.set_mode(25, pigpio.OUTPUT)  
-    pi.set_mode(24, pigpio.OUTPUT)  
+    pi.set_mode(24, pigpio.OUTPUT)
 
 
     pi.set_PWM_range(13, 1024) 
@@ -123,7 +123,12 @@ if __name__ == '__main__':
             ntime = datetime.datetime.now()
             deltaT = ntime - ptime
             timer = deltaT.total_seconds()
-            if timer > limit[n]:
+            if n == 1 and timer > limit[n]:
+                pi.set_mode(13, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
+                pi.set_mode(19, pigpio.INPUT) 
+                print("Controll TimeOut")
+                n = 2
+            elif timer > limit[n]:
                 print("Connection TimeOut")
                 break
             if end == 1:
