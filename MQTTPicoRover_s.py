@@ -7,7 +7,7 @@ from pygame.locals import *  # pygame中で使用できる定数群をimport
 def JoystickDetection(args):
     host = args  # サーバの固定IPを設定
     port = 1883  # 通信に使用するポート番号を指定
-    topic = ['PicoRover/1st/','PicoRover/2nd/','PicoRover/3rd']
+    topic = ['PicoRover/1st/','PicoRover/2nd/','PicoRover/3rd','PicoRover/stop']
     range = 1024 # server側で使用するpwmのrange
     sleeptime = 0.05 # socketで送信した後のスリープ時間
     target = 0
@@ -86,17 +86,23 @@ def JoystickDetection(args):
                         time.sleep(sleeptime) # 値を送ったら時間を空ける。この時間がない、もしくはサーバ側でGPIOを操作した後の休止時間よりある程度短い場合文字列が連結してサーバ側でエラーが出る
                 elif e.type == pygame.locals.JOYBUTTONDOWN:
                     print(e.button)
-                    if e.button == 5:
-                        target = target +1;
-                        if target > 2:
-                            target = 0
-                    elif e.button == 4:
-                        target = target -1;
-                        if target < 0:
-                            target = 2
-                    if e.button == 12:
+                    if e.button == 2:
+                        target = 0;
+                        print(topic[target]);
+                    elif e.button == 3:
+                        target = 1;
+                        print(topic[target]);
+                    elif e.button == 1:
+                        target = 2;
+                        print(topic[target]);
+                    elif e.button == 0:
+                        target = 3;
+                        print(topic[target]);
+                    if e.button == 7:
                         print ('E:')
-                        #client_sock.send('E:'.encode('utf-8'))
+                        client.publish(topic[0],'E:')
+                        client.publish(topic[1],'E:')
+                        client.publish(topic[2],'E:')
                         pygame.quit()
                         sys.exit()
 
