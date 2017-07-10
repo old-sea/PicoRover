@@ -90,18 +90,30 @@ def JoystickDetection(args):
                         target = 0;
                         print(topic[target]);
                         client.publish("PicoRover/change","1st");
+                        client.publish(topic[0],"A0:");
+                        client.publish(topic[1],"A0:");
+                        client.publish(topic[2],"A0:");
                     elif e.button == 3:
                         target = 1;
                         print(topic[target]);
                         client.publish("PicoRover/change","2nd");
+                        client.publish(topic[0],"A0:");
+                        client.publish(topic[1],"A0:");
+                        client.publish(topic[2],"A0:");
                     elif e.button == 1:
                         target = 2;
                         print(topic[target]);
                         client.publish("PicoRover/change","3rd");
+                        client.publish(topic[0],"A0:");
+                        client.publish(topic[1],"A0:");
+                        client.publish(topic[2],"A0:");
                     elif e.button == 0:
                         target = 3;
                         print(topic[target]);
                         client.publish("PicoRover/change","stop");
+                        client.publish(topic[0],"A0:");
+                        client.publish(topic[1],"A0:");
+                        client.publish(topic[2],"A0:");
                     if e.button == 7:
                         print ('E:')
                         client.publish(topic[0],'E:')
