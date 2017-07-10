@@ -56,7 +56,7 @@ def RCcontroll(recv):
         value1 = int(recv[0].lstrip('A'))  # æ–E­—åEã®é ­ã‚’å‰Šé™¤ã—ã¦æ•´æ•°ã«å¤‰æ›
         if value1 < -boundary:
             print (str(value1))
-            value1 = abs(value1)
+            value1 = abs(value1)*0.5
             pi.set_mode(13, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
             pi.set_mode(19, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
             pi.set_PWM_dutycycle(13, value1)  # pwmåˆ¶å¾¡
@@ -73,6 +73,7 @@ def RCcontroll(recv):
 
         elif boundary < value1:
             print (str(value1))
+            value1 = value1 * 0.5
             pi.set_mode(13, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
             pi.set_mode(19, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
             pi.set_PWM_dutycycle(13, value1)  # pwmåˆ¶å¾¡
