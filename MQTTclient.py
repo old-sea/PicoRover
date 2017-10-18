@@ -15,13 +15,18 @@ deltaT = 0
 ntime = datetime.datetime.now()
 ptime = datetime.datetime.now()
 timer = 0
-limit = [30,1,5] #[初期接続待機時間、動作停止のタイムアウト時間、プログラム停止のタイムアウト時間]
+limit = [30,1,15] #[初期接続待機時間、動作停止のタイムアウト時間、プログラム停止のタイムアウト時間]
 end = 0
 pi = pigpio.pi()
 boundary = 205
 interval = 0.001
 Duty_center = 1500
 counter = 0
+servo = 18
+DIR1 = 25
+DIR2 = 24
+PWM1 = 13
+PWM2 = 19
 
 
 def on_connect(client, userdata, flags, respons_code):
@@ -56,37 +61,37 @@ def RCcontroll(recv):
         value1 = int(recv[0].lstrip('A'))  # æ–E­—åEã®é ­ã‚’å‰Šé™¤ã—ã¦æ•´æ•°ã«å¤‰æ›
         if value1 < -boundary:
             print (str(value1))
-            value1 = abs(value1)*0.5
-            pi.set_mode(13, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_mode(19, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_PWM_dutycycle(13, value1)  # pwmåˆ¶å¾¡
-            pi.set_PWM_dutycycle(19, value1)
-            pi.write(25, 0)  # 25,24ç•ªãƒ”ãƒ³ã«LOWã‚’åEåŠE
-            pi.write(24, 0)
+            value1 = abs(value1)*0.3
+            pi.set_mode(PWM1, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
+            pi.set_mode(PWM2, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
+            pi.set_PWM_dutycycle(PWM1, value1)  # pwmåˆ¶å¾¡
+            pi.set_PWM_dutycycle(PWM2, value1)
+            pi.write(DIR1, 1)  # 25,24ç•ªãƒ”ãƒ³ã«LOWã‚’åEåŠE
+            pi.write(DIR2, 0)
             time.sleep(interval)
 
         elif -boundary <= value1 <= boundary:
             print (str(value1))
-            pi.set_mode(13, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
-            pi.set_mode(19, pigpio.INPUT)  # ãƒ”ãƒ³ã‚’åEåŠ›ã«è¨­å®šã™ã‚‹ã“ã¨ã§ãƒ¢ãƒ¼ã‚¿ãŒã¨ã¾ã‚‹ã¿ãŸã„
+            pi.set_mode(PWM1, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
+            pi.set_mode(PWM2, pigpio.INPUT)  # ãƒ”ãƒ³ã‚’åEåŠ›ã«è¨­å®šã™ã‚‹ã“ã¨ã§ãƒ¢ãƒ¼ã‚¿ãŒã¨ã¾ã‚‹ã¿ãŸã„
             time.sleep(interval)
 
         elif boundary < value1:
             print (str(value1))
-            value1 = value1 * 0.5
-            pi.set_mode(13, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_mode(19, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_PWM_dutycycle(13, value1)  # pwmåˆ¶å¾¡
-            pi.set_PWM_dutycycle(19, value1)
-            pi.write(25, 1)  # 25,24ç•ªãƒ”ãƒ³ã«HIGHã‚’åEåŠE
-            pi.write(24, 1)
+            value1 = value1 * 0.2
+            pi.set_mode(PWM1, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
+            pi.set_mode(PWM2, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
+            pi.set_PWM_dutycycle(PWM1, value1)  # pwmåˆ¶å¾¡
+            pi.set_PWM_dutycycle(PWM2, value1)
+            pi.write(DIR1, 0)  # 25,24ç•ªãƒ”ãƒ³ã«HIGHã‚’åEåŠE
+            pi.write(DIR2, 1)
             time.sleep(interval)
 
     elif recv[0].startswith('B'):
         value2 = int(recv[0].lstrip('B'))
         recv[0] = ''
         print (str(value2))
-        pi.set_servo_pulsewidth(18, value2)
+        pi.set_servo_pulsewidth(servo, value2)
         time.sleep(interval)
 
     else:
@@ -105,17 +110,17 @@ if __name__ == '__main__':
     client.on_message = on_message
     client.connect(host, port=port, keepalive=60)
 
-    pi.set_mode(13, pigpio.INPUT) 
-    pi.set_mode(19, pigpio.INPUT)  
-    pi.set_mode(25, pigpio.OUTPUT)  
-    pi.set_mode(24, pigpio.OUTPUT)
+    pi.set_mode(PWM1, pigpio.INPUT) 
+    pi.set_mode(PWM2, pigpio.INPUT)  
+    pi.set_mode(DIR1, pigpio.OUTPUT)  
+    pi.set_mode(DIR2, pigpio.OUTPUT)
 
 
-    pi.set_PWM_range(13, 1024) 
-    pi.set_PWM_range(19, 1024)
+    pi.set_PWM_range(PWM1, 1024) 
+    pi.set_PWM_range(PWM2, 1024)
     ptime = datetime.datetime.now()
 
-    pi.set_servo_pulsewidth(18, Duty_center) #steering set center
+    pi.set_servo_pulsewidth(servo, Duty_center) #steering set center
 
     try:
         client.loop_start()
@@ -125,8 +130,8 @@ if __name__ == '__main__':
             deltaT = ntime - ptime
             timer = deltaT.total_seconds()
             if n == 1 and timer > limit[n]:
-                pi.set_mode(13, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
-                pi.set_mode(19, pigpio.INPUT) 
+                pi.set_mode(PWM1, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
+                pi.set_mode(PWM2, pigpio.INPUT) 
                 print("Controll TimeOut")
                 n = 2
             elif timer > limit[n]:
@@ -143,11 +148,11 @@ if __name__ == '__main__':
 
     finally:
         client.loop_stop()
-        pi.set_mode(18, pigpio.INPUT)
-        pi.set_mode(13, pigpio.INPUT)
-        pi.set_mode(19, pigpio.INPUT)
-        pi.set_mode(25, pigpio.INPUT)
-        pi.set_mode(24, pigpio.INPUT)
+        pi.set_mode(servo, pigpio.INPUT)
+        pi.set_mode(PWM1, pigpio.INPUT)
+        pi.set_mode(PWM2, pigpio.INPUT)
+        pi.set_mode(DIR1, pigpio.INPUT)
+        pi.set_mode(DIR2, pigpio.INPUT)
         pi.stop()
         print('-------EXIT-------')
         sys.exit()
