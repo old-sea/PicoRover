@@ -7,7 +7,7 @@ import datetime
 import time 
 import sys
 import pigpio
-
+#test
 n = 0 #待機モードの切り替え
 port = 1883
 topic = 'PicoRover/'+ sys.argv[2] +'/#'
