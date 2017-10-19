@@ -41,7 +41,7 @@ def on_message(client, userdata, msg):
     M = M.split(':')
     print(M)
     try:
-        RCcontroll(M)
+        Message_switch(M)
     except:
         print("Controll Out")
     global n
@@ -49,54 +49,70 @@ def on_message(client, userdata, msg):
     global ptime
     ptime = datetime.datetime.now()
 
-def RCcontroll(recv):
-    print("control")
+def Message_switch(recv):
+
     if recv.count('S') >= 1:
-        print ('S')
+        print ('')
     elif recv.count('E') >= 1:
         print ('E')
         global end
         end = 1
-    elif recv[0].startswith('A'):  # å—ã‘å–ã£ãŸæ–‡å­—åEãŒAã§å§‹ã¾ã‚‹å ´åE
-        value1 = int(recv[0].lstrip('A'))  # æ–E­—åEã®é ­ã‚’å‰Šé™¤ã—ã¦æ•´æ•°ã«å¤‰æ›
+    elif recv[0].startswith('A'):
+        #RCcontroll_A(recv);
+        global com_speed
+        com_speed = recv
+        RC_timer1 = datetime.datetime.now()
+    elif recv[0].startswith('B'):
+        RCcontroll_B(recv);
+    else:
+        print("Not Defined Signal");
+        pass;
+
+def RCcontroll_A(recv):
+        global now_speed
+        print(recv)
+        value1 = int(recv[0].lstrip('A'))
         if value1 < -boundary:
-            print (str(value1))
-            value1 = abs(value1)*0.3
-            pi.set_mode(PWM1, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_mode(PWM2, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_PWM_dutycycle(PWM1, value1)  # pwmåˆ¶å¾¡
-            pi.set_PWM_dutycycle(PWM2, value1)
-            pi.write(DIR1, 1)  # 25,24ç•ªãƒ”ãƒ³ã«LOWã‚’åEåŠE
-            pi.write(DIR2, 0)
+            value1 = abs(value1)
+            pi.set_mode(13, pigpio.ALT2)
+            pi.set_mode(19, pigpio.ALT2)
+            now_speed = now_speed +(value1 - now_speed)/100
+            print(now_speed)
+            pi.set_PWM_dutycycle(13, now_speed)
+            pi.set_PWM_dutycycle(19, now_speed)
+            pi.write(25, 0)
+            pi.write(24, 1)
             time.sleep(interval)
 
         elif -boundary <= value1 <= boundary:
             print (str(value1))
-            pi.set_mode(PWM1, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
-            pi.set_mode(PWM2, pigpio.INPUT)  # ãƒ”ãƒ³ã‚’åEåŠ›ã«è¨­å®šã™ã‚‹ã“ã¨ã§ãƒ¢ãƒ¼ã‚¿ãŒã¨ã¾ã‚‹ã¿ãŸã„
+            pi.set_mode(13, pigpio.INPUT)
+            pi.set_mode(19, pigpio.INPUT)
             time.sleep(interval)
 
         elif boundary < value1:
             print (str(value1))
-            value1 = value1 * 0.2
-            pi.set_mode(PWM1, pigpio.ALT2)  # 13ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_mode(PWM2, pigpio.ALT2)  # 19ç•ªãƒ”ãƒ³ã‚’ALT2ã«è¨­å®E
-            pi.set_PWM_dutycycle(PWM1, value1)  # pwmåˆ¶å¾¡
-            pi.set_PWM_dutycycle(PWM2, value1)
-            pi.write(DIR1, 0)  # 25,24ç•ªãƒ”ãƒ³ã«HIGHã‚’åEåŠE
-            pi.write(DIR2, 1)
+            value1 = value1 
+            pi.set_mode(13, pigpio.ALT2)
+            pi.set_mode(19, pigpio.ALT2)
+            now_speed = now_speed +(value1 - now_speed)/100
+            print(now_speed)
+            pi.set_PWM_dutycycle(13, now_speed)
+            pi.set_PWM_dutycycle(19, now_speed)
+            pi.write(25, 1)
+            pi.write(24, 0)
             time.sleep(interval)
 
-    elif recv[0].startswith('B'):
+
+
+def RCcontroll_B(recv):
+        print("ContB")
         value2 = int(recv[0].lstrip('B'))
         recv[0] = ''
         print (str(value2))
-        pi.set_servo_pulsewidth(servo, value2)
+        pi.set_servo_pulsewidth(18, value2)
         time.sleep(interval)
 
-    else:
-        print("not defined signal")
-        pass
 
 
 if __name__ == '__main__':
