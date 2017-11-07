@@ -56,10 +56,10 @@ def Message_switch(recv):
         global end
         end = 1
     elif recv[0].startswith('A'):
-        #RCcontroll_A(recv);
-        global com_speed
-        com_speed = recv
-        RC_timer1 = datetime.datetime.now()
+        RCcontroll_A(recv);
+       # global com_speed
+        #com_speed = recv
+        #RC_timer1 = datetime.datetime.now()
     elif recv[0].startswith('B'):
         RCcontroll_B(recv);
     else:
@@ -67,19 +67,21 @@ def Message_switch(recv):
         pass;
 
 def RCcontroll_A(recv):
-        global now_speed
+        #global now_speed
         print(recv)
         value1 = int(recv[0].lstrip('A'))
         if value1 < -boundary:
-            value1 = abs(value1)
+            value1 = abs(value1)*0.3
             pi.set_mode(PWM1, pigpio.ALT2)
             pi.set_mode(PWM2, pigpio.ALT2)
-            now_speed = now_speed +(value1 - now_speed)/100
-            print(now_speed)
-            pi.set_PWM_dutycycle(PWM1, now_speed)
-            pi.set_PWM_dutycycle(PWM2, now_speed)
-            pi.write(DIR1, 0)
-            pi.write(DIR2, 1)
+            #now_speed = now_speed +(value1 - now_speed)/100
+            #print(now_speed)
+            pi.set_PWM_dutycycle(PWM1, value1)
+            pi.set_PWM_dutycycle(PWM2, value1)
+            #pi.set_PWM_dutycycle(PWM1, now_speed)
+            #pi.set_PWM_dutycycle(PWM2, now_speed)
+            pi.write(DIR1, 1)
+            pi.write(DIR2, 0)
             time.sleep(interval)
 
         elif -boundary <= value1 <= boundary:
@@ -90,21 +92,22 @@ def RCcontroll_A(recv):
 
         elif boundary < value1:
             print (str(value1))
-            value1 = value1 
+            value1 = value1*0.3
             pi.set_mode(PWM1, pigpio.ALT2)
             pi.set_mode(PWM2, pigpio.ALT2)
-            now_speed = now_speed +(value1 - now_speed)/100
-            print(now_speed)
-            pi.set_PWM_dutycycle(PMW1, now_speed)
-            pi.set_PWM_dutycycle(PWM2, now_speed)
-            pi.write(PIR1, 1)
-            pi.write(DIR2, 0)
+            #now_speed = now_speed +(value1 - now_speed)/100
+            #print(now_speed)
+            pi.set_PWM_dutycycle(PWM1, value1)
+            pi.set_PWM_dutycycle(PWM2, value1)
+            #pi.set_PWM_dutycycle(PMW1, now_speed)
+            #pi.set_PWM_dutycycle(PWM2, now_speed)
+            pi.write(DIR1, 0)
+            pi.write(DIR2, 1)
             time.sleep(interval)
 
 
 
 def RCcontroll_B(recv):
-        print("ContB")
         value2 = int(recv[0].lstrip('B'))
         recv[0] = ''
         print (str(value2))
