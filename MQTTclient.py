@@ -7,6 +7,7 @@ import datetime
 import time 
 import sys
 import pigpio
+import iperf3
 #test
 n = 0 #待機モードの切り替え
 port = 1883
@@ -121,6 +122,9 @@ if __name__ == '__main__':
     counter = 0
      #Publisherã¨åŒæ§˜ã« v3.1.1ã‚’åˆ©ç”¨
     client = mqtt.Client(protocol=mqtt.MQTTv311)
+    iclient = iperf3.Client()
+    iclient.duration = 1 # Measurement time [sec]
+    iclient.server_hostname = host # Server's IP address
 
     client.on_connect = on_connect
     client.on_message = on_message
