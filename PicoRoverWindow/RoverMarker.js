@@ -1,4 +1,4 @@
-//for MQTT
+///for MQTT
 const topic_base="";
 
 var clientId = "jsmqtt_" + (Math.floor(Math.random() * 100000));
@@ -11,16 +11,68 @@ var w3;
 
 function onConnect(){
 	//only subscribe topic
-	client.subscribe("PicoRover/change")
+	client.subscribe("PicoRover/#")
 }
 
 function onConnectionLost(responseObject){
 	if (responseObject.errorCode !== 0) {
 		console.log("onConnectionLost:"+responseObject.errorMessage);
+
 	}
 }
 
 function onMessageArrived(message){
+	/*if(message.destinationName.match(/1st/)){
+		console.log("a");
+		if(message.payloadString.match(/A/)){
+			var S1 = document.getElementById('1st-S');
+			S1.innerHTML = message.payloadString;
+		}
+	}else if(message.destinationName.match(/2nd/)){
+		console.log("b");
+		if(message.payloadString.match(/A/)){
+			var S2 = document.getElementById('2nd-S');
+			S2.innerHTML = message.payloadString;
+		}
+	}else if(message.destinationName.match(/3rd/)){
+		console.log("c");
+		if(message.payloadString.match(/A/)){
+			var S3 = document.getElementById('3rd-S');
+			S3.innerHTML = message.payloadString;
+		}
+	}*/
+	
+	if(message.payloadString.match(/A/)){
+		if(message.destinationName.match(/1st/)){
+			console.log("Sa");
+			var S1 = document.getElementById('1st-S');
+			S1.innerHTML = message.payloadString;
+		}else if(message.destinationName.match(/2nd/)){
+			console.log("Sb");
+			var S2 = document.getElementById('2nd-S');
+			S2.innerHTML = message.payloadString;
+		}else if(message.destinationName.match(/3rd/)){
+			console.log("Sc");
+			var S3 = document.getElementById('3rd-S');
+			S3.innerHTML = message.payloadString;
+		}
+	}
+	if(message.destinationName.match(/throughput/)){
+		console.log("thoroughput")
+		if(message.destinationName.match(/1st/)){
+			console.log("Ta");
+			var T1 = document.getElementById('1st-T');
+			T1.innerHTML = message.payloadString.slice(0, 4) + "[Mbps]" ;
+		}else if(message.destinationName.match(/2nd/)){
+			console.log("b");
+			var T2 = document.getElementById('2nd-T');
+			T2.innerHTML = message.payloadString.slice(0, 4) + "[Mbps]";
+		}else if(message.destinationName.match(/3rd/)){
+			console.log("b");
+			var T3 = document.getElementById('3rd-T');
+			T3.innerHTML = message.payloadString.slice(0, 4) + "[Mbps]";
+		}
+	}
 	console.log("onMsgRecv: " + message.payloadString + " DestName=" + message.destinationName);
 	if(message.payloadString.match(/1st/)){
 		drawMark(0,"nom");
@@ -79,9 +131,9 @@ window.onload = function(){
 	w1.document.title="rover-1";
 
 	//setURL
-	w3.location.href = "http://192.168.60.17/live/index2.html?Language=1"
-	w2.location.href = "http://192.168.60.12/live/index2.html?Language=1"
-	w1.location.href = "http://192.168.60.11/live/index2.html?Language=1"
+	w3.location.href = "http://192.168.60.16/live/index2.html?Language=1"
+	w2.location.href = "http://192.168.60.18/live/index2.html?Language=1"
+	w1.location.href = "http://192.168.60.17/live/index2.html?Language=1"
 
 	setInterval(window.focus,1000);
 	drawMark(1,"stop");
@@ -104,7 +156,7 @@ drawMark= function(num,mode){
 		context.fillStyle = "rgb(200,128,128)";
 		context.font = "bold 36px sans-serif"
 		context.textAlign = "center";
-		context.fillText("Not Operation", 0.95 * cw/6 + 1 * cw/3, ch/1.5, 0.9 * cw/3 );
+		context.fillText("Not Operation", 0.95 * cw/6 + 1 * cw/3, 30, 0.9 * cw/3 );
 	}else{
 		context.fillStyle = "rgb(255,0,128)";
 		context.fillRect(num * cw/3, 0, 0.95 * cw/3, 0.9 * ch);
@@ -112,7 +164,7 @@ drawMark= function(num,mode){
 		context.fillStyle = "rgb(0,0,128)";
 		context.font = "bold 36px sans-serif"
 		context.textAlign = "center";
-		context.fillText("Now in Operation", 0.95 * cw/6 + num * cw/3, ch/1.5, 0.9 * cw/3 );
+		context.fillText("Now in Operation", 0.95 * cw/6 + num * cw/3, 30, 0.9 * cw/3 );
 	}
 	
 }
