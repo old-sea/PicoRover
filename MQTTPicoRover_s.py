@@ -89,7 +89,8 @@ def JoystickDetection(args):
                     if e.button == 2:
                         target = 0;
                         print(topic[target]);
-                        client.publish("PicoRover/change","1st");
+                        client.publish("PicoRover/change","1st");#マーカー切り替えのために専用のTopicにメッセージを送信
+                        #切り替えのタイミングで全機体を一時停止(スティックを倒したまま切り替えたときに、動き続けるのを防止するため)
                         client.publish(topic[0],"A0:");
                         client.publish(topic[1],"A0:");
                         client.publish(topic[2],"A0:");
@@ -124,6 +125,7 @@ def JoystickDetection(args):
 
                     else:
                         pass
+            #定期的に生存信号「S」をRaspberry Piに送信
             timer_latest = datetime.datetime.now()
             delta = timer_latest - timer_old
             timer = delta.total_seconds()

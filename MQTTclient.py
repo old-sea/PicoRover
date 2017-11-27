@@ -23,6 +23,7 @@ boundary = 205
 interval = 0.001
 Duty_center = 1500
 counter = 0
+#GPIOピン
 servo = 18
 DIR1 = 25
 DIR2 = 24
@@ -120,7 +121,6 @@ if __name__ == '__main__':
     args = sys.argv
     host = args[1]
     counter = 0
-     #Publisherã¨åŒæ§˜ã« v3.1.1ã‚’åˆ©ç”¨
     client = mqtt.Client(protocol=mqtt.MQTTv311)
     iclient = iperf3.Client()
     iclient.duration = 1 # Measurement time [sec]
@@ -149,18 +149,18 @@ if __name__ == '__main__':
             ntime = datetime.datetime.now()
             deltaT = ntime - ptime
             timer = deltaT.total_seconds()
-            if n == 1 and timer > limit[n]:
-                pi.set_mode(PWM1, pigpio.INPUT)  # pwmãƒ¢ãƒ¼ãƒ‰ã§ãƒEƒ¥ãƒ¼ãƒE‚£æ¯”ã‚’0ã«ã™ã‚‹ã ã‘ã§ã¯ãƒ¢ãƒ¼ã‚¿ã®å›žè»¢ãŒæ­¢ã¾ã‚‰ãªãE
+            if n == 1 and timer > limit[n]:#動作状態におけるタイムアウト時間をオーバーすると動作を止める
+                pi.set_mode(PWM1, pigpio.INPUT)
                 pi.set_mode(PWM2, pigpio.INPUT) 
                 print("Controll TimeOut")
-                n = 2
-            elif timer > limit[n]:
+                n = 2 # 停止モード
+            elif timer > limit[n]:#接続待機状態or停止状態におけるタイムアウト時間をオーバーすると動作を止める
                 print("Connection TimeOut")
                 break
             if end == 1:
                 print('end')
                 break
-            time.sleep(0.1)
+            time.sleep(0.1)#処理落ち防止のためにループ速度を落とす
 
     except KeyboardInterrupt:
         print (u'')
@@ -168,6 +168,7 @@ if __name__ == '__main__':
 
     finally:
         client.loop_stop()
+        #GPIOを入力に設定し、出力を止める
         pi.set_mode(servo, pigpio.INPUT)
         pi.set_mode(PWM1, pigpio.INPUT)
         pi.set_mode(PWM2, pigpio.INPUT)
