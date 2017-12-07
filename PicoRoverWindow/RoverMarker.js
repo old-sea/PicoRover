@@ -135,7 +135,7 @@ window.onload = function(){
 	w2.location.href = "http://192.168.60.18/live/index2.html?Language=1"
 	w1.location.href = "http://192.168.60.17/live/index2.html?Language=1"
 
-	setInterval(window.focus,1000);
+	//setInterval(window.focus,1000);
 	drawMark(1,"stop");
 
 }
