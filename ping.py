@@ -1,7 +1,7 @@
 import pings
 import paho.mqtt.client as mqtt
 
-hosts = ["192.168.95.212", "192.168.95.213", "192.168.95.214"]
+hosts = ["10.0.15.43", "10.0.15.44", "10.0.15.45"]
 topics = ["1st","2nd","3rd"]
 
 p = pings.Ping(packet_size=600) # Pingオブジェクト作成
@@ -20,7 +20,7 @@ print ("on_connect")
 while(1):
 	i = 0
 	for h in hosts:
-		res = p.ping(h)
+		res = p.ping(h,times=3)
 		if res.is_reached():
 			# 監視対象への接続ができた
 			print("")
