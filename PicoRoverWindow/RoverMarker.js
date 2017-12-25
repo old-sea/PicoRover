@@ -121,9 +121,9 @@ window.onload = function(){
 	client.connect({onSuccess:onConnect});
 	
 	//open window(s)
-	w3 = window.open( "", "rover3", "width=640,height=400,top=0,left=775 resizable=0 menubar=0 location=0 toolbar=0 dependent=1");
-	w2 = window.open( "", "rover2", "width=640,height=400,top=0,left=325 resizable=0 menubar=0 location=0 toolbar=0 dependent=1");
-	w1 = window.open( "", "rover1", "width=640,height=400,top=0,left=0 resizable=0 menubar=0 location=0 toolbar=0 dependent=1");
+	w3 = window.open( "", "rover3", "width=640,height=400,top=0,left=775 resizable=1 menubar=0 location=0 toolbar=0 dependent=1");
+	w2 = window.open( "", "rover2", "width=640,height=400,top=0,left=325 resizable=1 menubar=0 location=0 toolbar=0 dependent=1");
+	w1 = window.open( "", "rover1", "width=640,height=400,top=0,left=0 resizable=1 menubar=0 location=0 toolbar=0 dependent=1");
 
 	//setTitle
 	w3.document.title="rover-3";
